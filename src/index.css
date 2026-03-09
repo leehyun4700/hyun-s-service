@@ -51,3 +51,23 @@ body {
   0%, 100% { opacity: 1; }
   50% { opacity: 0.5; }
 }
+
+/* ─── Landing Page Responsive ─── */
+@media (max-width: 768px) {
+  .landing-desktop-nav {
+    display: none !important;
+  }
+  .landing-mobile-menu-btn {
+    display: block !important;
+  }
+}
+
+@media (min-width: 769px) {
+  .landing-mobile-menu-btn {
+    display: none !important;
+  }
+}
+
+html {
+  scroll-behavior: smooth;
+}

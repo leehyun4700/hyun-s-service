@@ -1,3 +1,4 @@
+import { useState, useEffect } from "react";
 import { supabase } from "./lib/supabase";
 import { requestForToken, onMessageListener, auth, sendPushNotification } from "./lib/firebase";
 import {
@@ -6,6 +7,7 @@ import {
     signOut,
     createUserWithEmailAndPassword
 } from "firebase/auth";
+import LandingPage from "./LandingPage";
 
 // ─── 알림 시뮬레이션 (FCM 연동 전) ──────────────────────────────────
 const createNotification = (student, type, academyId) => ({
@@ -206,6 +208,9 @@ function AdminLoginScreen({ onBack }) {
 
 // ─── 메인 앱 ─────────────────────────────────────────────────────
 export default function TaekwondoApp() {
+    const [showLanding, setShowLanding] = useState(() => {
+        return !window.location.hash || window.location.hash === "#landing";
+    });
     const [role, setRole] = useState(null); // "admin" | "parent" | "kiosk"
     const [currentUser, setCurrentUser] = useState(null);
     const [academyInfo, setAcademyInfo] = useState(null);
@@ -347,6 +352,13 @@ export default function TaekwondoApp() {
         await signOut(auth);
         setRole(null);
     };
+
+    if (showLanding) return (
+        <LandingPage onStart={() => {
+            setShowLanding(false);
+            window.location.hash = "#app";
+        }} />
+    );
 
     if (loadingDb) return (
         <div style={{ minHeight: "100vh", background: "#0a0a0a", display: "flex", alignItems: "center", justifyContent: "center", color: "#fff", fontSize: 20 }}>
