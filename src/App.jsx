@@ -208,10 +208,7 @@ function AdminLoginScreen({ onBack }) {
 
 // ─── 메인 앱 ─────────────────────────────────────────────────────
 export default function TaekwondoApp() {
-    const [showLanding, setShowLanding] = useState(() => {
-        // sessionStorage를 사용해 새로고침 시에도 랜딩 재표시
-        return !sessionStorage.getItem("app_started");
-    });
+    const [showLanding, setShowLanding] = useState(true);
     const [role, setRole] = useState(null); // "admin" | "parent" | "kiosk"
     const [currentUser, setCurrentUser] = useState(null);
     const [academyInfo, setAcademyInfo] = useState(null);
@@ -227,10 +224,13 @@ export default function TaekwondoApp() {
 
     // Firebase Auth 상태 감시
     useEffect(() => {
+        if (!auth) {
+            setLoadingDb(false);
+            return;
+        }
         const unsubscribe = onAuthStateChanged(auth, async (user) => {
             if (user) {
                 setCurrentUser(user);
-                sessionStorage.setItem("app_started", "1");
                 setShowLanding(false);
                 // Supabase에서 도장 정보 가져오기
                 const { data, error } = await supabase.from("academies").select("*").eq("id", user.uid).single();
@@ -357,10 +357,7 @@ export default function TaekwondoApp() {
     };
 
     if (showLanding) return (
-        <LandingPage onStart={() => {
-            sessionStorage.setItem("app_started", "1");
-            setShowLanding(false);
-        }} />
+        <LandingPage onStart={() => setShowLanding(false)} />
     );
 
     if (loadingDb) return (
